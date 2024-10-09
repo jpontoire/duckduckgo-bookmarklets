@@ -3,12 +3,22 @@ javascript: (async function () {
         const popup = document.createElement("div");
         popup.style.position = "fixed";
         popup.style.top = "50%";
-        popup.style.left = "50%";
+        popup.style.right = "0%";
         popup.style.transform = "translate(-50%, -50%)";
         popup.style.backgroundColor = "white";
         popup.style.border = "1px solid black";
         popup.style.padding = "20px";
         popup.style.zIndex = "10000";
+        popup.style.display = "flex";
+        popup.style.flexDirection = "column";
+        popup.style.alignItems = "center";
+        popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+
+        const title = document.createElement("h2");
+        title.textContent = "DuckDuckGo bookmarklet";
+        title.style.margin = "0";
+
+        popup.appendChild(title);
 
         const select = document.createElement("select");
         const options = [10, 20, 50, 100];
@@ -18,6 +28,8 @@ javascript: (async function () {
             option.textContent = optionValue;
             select.appendChild(option);
         });
+        select.style.padding = "10px";
+        select.style.margin = "10px";
         popup.appendChild(select);
 
         const button = document.createElement("button");
@@ -29,7 +41,8 @@ javascript: (async function () {
             toCSV(data)
             document.body.removeChild(popup);
         };
-
+        button.style.padding = "10px";
+        button.style.margin = "10px";
         popup.appendChild(button);
         document.body.appendChild(popup);
     }
