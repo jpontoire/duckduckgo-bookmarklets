@@ -10,11 +10,22 @@ javascript: (async function () {
         popup.style.padding = "20px";
         popup.style.zIndex = "10000";
 
+        const select = document.createElement("select");
+        const options = [10, 20, 50, 100];
+        options.forEach(optionValue => {
+            const option = document.createElement("option");
+            option.value = optionValue;
+            option.textContent = optionValue;
+            select.appendChild(option);
+        });
+        popup.appendChild(select);
+
         const button = document.createElement("button");
         button.textContent = "Lancer le scraping";
         
         button.onclick = async function () {
-            const data = await scrape(50);
+            const n = parseInt(select.value, 10);
+            const data = await scrape(n);
             toCSV(data)
             document.body.removeChild(popup);
         };
@@ -27,9 +38,8 @@ javascript: (async function () {
         const button = document.getElementById('more-results');
         if (button) {
             button.click();
-            console.log("Bouton cliqué!");
         } else {
-            console.log("Bouton non trouvé.");
+            console.log("No button");
         }
     }
 
