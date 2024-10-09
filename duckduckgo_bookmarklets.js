@@ -55,13 +55,12 @@ javascript: (async function () {
             await wait(2000);
             var scrap = document.querySelectorAll('li[data-layout="organic"] article');
         }
-        console.log(scrap.length);
-        scrap.forEach(function(ele) {
+        scrap = Array.from(scrap).slice(0, n);
+        for (let i = 0; i < scrap.length && results.length < n; i++) {
+            let ele = scrap[i];
             let titleElement = ele.querySelector('h2 a');
             let title = titleElement ? titleElement.textContent : null;
-
             let link = titleElement ? titleElement.href : null;
-
             let descriptionElement = ele.querySelector('article>div>div>div>span');
             let description = descriptionElement ? descriptionElement.textContent : null;
 
@@ -69,8 +68,8 @@ javascript: (async function () {
                 title: title,
                 link: link,
                 description: description
-            })
-        });
+            });
+        }
 
         console.log(results);
         return results;
