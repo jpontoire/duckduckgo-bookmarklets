@@ -21,7 +21,7 @@ javascript: (async function () {
         popup.appendChild(title);
 
         const select = document.createElement("select");
-        const options = [10, 20, 50, 100];
+        const options = [10, 20, 50, 100, 1000];
         options.forEach(optionValue => {
             const option = document.createElement("option");
             option.value = optionValue;
@@ -38,7 +38,7 @@ javascript: (async function () {
         button.onclick = async function () {
             const n = parseInt(select.value, 10);
             const data = await scrape(n);
-            toCSV(data)
+            await toCSV(data)
             document.body.removeChild(popup);
         };
         button.style.padding = "10px";
@@ -65,7 +65,7 @@ javascript: (async function () {
         var scrap = document.querySelectorAll('li[data-layout="organic"] article');
         while(scrap.length < n){
             await moreResult();
-            await wait(2000);
+            await wait(1000);
             var scrap = document.querySelectorAll('li[data-layout="organic"] article');
         }
         scrap = Array.from(scrap).slice(0, n);
@@ -83,21 +83,31 @@ javascript: (async function () {
                 description: description
             });
         }
-
-        console.log(results);
+        console.log(results)
         return results;
     }
 
     async function toCSV(data) {
-        const csvText = "Title,Link,Description\n" +
-        data.map(e => `"${e.title ? e.title.replace(/"/g, '""') : ''}","${e.link ? e.link.replace(/"/g, '""') : ''}","${e.description ? e.description.replace(/"/g, '""') : ''}"`).join("\n");
-
-        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvText);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "results.csv");
+        function escapeCSV(value) {
+            let escapedValue = value.replace(/"/g, '""');            
+            return `'"${escapedValue}"'`;
+        }
+    
+        const csvContent = [
+            '"title","url","description"',
+            ...data.map(item => 
+                `${escapeCSV(item.title || '')}, ${escapeCSV(item.link || '')}, ${escapeCSV(item.description || '')}`
+            )
+        ].join('\n');
+    
+        const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob);
+    
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'results.csv';
+    
         document.body.appendChild(link);
-
         link.click();
         document.body.removeChild(link);
     }
