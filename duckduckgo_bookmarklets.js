@@ -38,7 +38,8 @@ javascript: (async function () {
         button.onclick = async function () {
             const n = parseInt(select.value, 10);
             const data = await scrape(n);
-            await toCSV(data)
+            const csvData = await toCSV(data)
+            await downloadCSV(csvData)
             document.body.removeChild(popup);
         };
         button.style.padding = "10px";
@@ -88,19 +89,24 @@ javascript: (async function () {
     }
 
     async function toCSV(data) {
-        function escapeCSV(value) {
-            let escapedValue = value.replace(/"/g, '""');            
-            return `'"${escapedValue}"'`;
+        csvRows = [];
+        const headers = Object.keys(data[0]);
+        csvRows.push(headers.join(','));
+        
+        for (let i = 0; i < data.length; i++) {
+            const values = Object.values(data[i]).map(value => {
+                if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
+                    value = `"${value.replace(/"/g, '""')}"`;
+                }
+                return value;
+            }).join(',');
+            csvRows.push(values);
         }
-    
-        const csvContent = [
-            '"title","url","description"',
-            ...data.map(item => 
-                `${escapeCSV(item.title || '')}, ${escapeCSV(item.link || '')}, ${escapeCSV(item.description || '')}`
-            )
-        ].join('\n');
-    
-        const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+        return csvRows.join('\n');
+    }
+
+    async function downloadCSV(data){
+        const blob = new Blob([data], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
     
         const link = document.createElement('a');
@@ -115,3 +121,5 @@ javascript: (async function () {
     createPopup();
 
 });
+
+
