@@ -52,8 +52,9 @@ javascript: (async function () {
         const button = document.getElementById('more-results');
         if (button) {
             button.click();
+            return 1;
         } else {
-            console.log("No button");
+            return 0;
         }
     }
 
@@ -64,8 +65,9 @@ javascript: (async function () {
     async function scrape(n) {
         let results = [];
         var scrap = document.querySelectorAll('li[data-layout="organic"] article');
-        while(scrap.length < n){
-            await moreResult();
+        let more = 1;
+        while(scrap.length < n && more == 1){
+            more = await moreResult();
             await wait(1000);
             var scrap = document.querySelectorAll('li[data-layout="organic"] article');
         }
@@ -121,5 +123,4 @@ javascript: (async function () {
     createPopup();
 
 });
-
 
