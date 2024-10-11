@@ -58,9 +58,10 @@ javascript: (async function () {
         }
     }
 
-    async function wait(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    async function wait(minDelay, maxDelay) {
+        const delay = Math.floor(Math.random() * (maxDelay - minDelay)) + minDelay;
+        return new Promise(resolve => setTimeout(resolve, delay));
+      }
 
     async function scrape(n) {
         let results = [];
@@ -68,7 +69,7 @@ javascript: (async function () {
         let more = 1;
         while(scrap.length < n && more == 1){
             more = await moreResult();
-            await wait(1000);
+            await wait(1000, 2000);
             var scrap = document.querySelectorAll('li[data-layout="organic"] article');
         }
         scrap = Array.from(scrap).slice(0, n);
